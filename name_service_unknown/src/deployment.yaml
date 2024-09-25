@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  labels:
+    app: myapp
+spec:
+  replicas: 3  # Number of pod replicas
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp-container
+        image: myapp:latest  # Replace with your app image
+        ports:
+        - containerPort: 8080  # Container port to expose
+
+        env:
+        - name: Hostname
+          value: "gateway.ocbc.com"
+        - name: Nameserver
+          value: "168.63.129.16"
+        - name: Nameserver
+          value: "168.63.129.16"
+        - name: MillisecondBetweenCalls
+          value: "3000"
+
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "100m"

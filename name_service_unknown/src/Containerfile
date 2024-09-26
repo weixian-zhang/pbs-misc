@@ -9,7 +9,7 @@ RUN dotnet restore
 
 # Copy the rest of the source code and build the application
 COPY . ./
-RUN dotnet publish -c Release -o /app/out --runtime linux-x64 --self-contained true /p:PublishTrimmed=true
+RUN dotnet publish -c Release -o /app/out --runtime linux-x64  /p:PublishTrimmed=true
 
 # Stage 2: Create the runtime environment
 # # mcr.microsoft.com/dotnet/runtime-deps:8.0 AS runtime

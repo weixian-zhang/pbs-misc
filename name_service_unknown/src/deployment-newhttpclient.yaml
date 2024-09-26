@@ -1,32 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: myapp-deployment
+  name: ocbc-httpclient
   labels:
-    app: myapp
+    app: ocbc-httpclient
 spec:
-  replicas: 3  # Number of pod replicas
+  replicas: 2  # Number of pod replicas
   selector:
     matchLabels:
-      app: myapp
+      app: ocbc-httpclient
   template:
     metadata:
       labels:
-        app: myapp
+        app: ocbc-httpclient
     spec:
       containers:
       - name: myapp-container
-        image: myapp:latest  # Replace with your app image
-        ports:
-        - containerPort: 8080  # Container port to expose
+        image: docker.io/wxzd/simulatenameunknown:v1  # Replace with your app image
 
         env:
         - name: Hostname
           value: "gateway.ocbc.com"
         - name: Nameserver
-          value: "168.63.129.16"
-        - name: Nameserver
-          value: "168.63.129.16"
+          value: "12.0.1.4" # custom dns server
+        - name: NameserverPort
+          value: "53"
         - name: MillisecondBetweenCalls
           value: "3000"
 

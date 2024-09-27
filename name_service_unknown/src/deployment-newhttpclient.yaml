@@ -20,7 +20,7 @@ spec:
         imagePullPolicy: Always
         env:
         - name: Url
-          value: "http://httpbin.org/delay/1"
+          value: "https://httpbin.org/delay/1"
         - name: Nameserver
           value: "168.63.129.16" # custom dns server
         - name: NameserverPort

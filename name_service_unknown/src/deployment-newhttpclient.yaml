@@ -16,17 +16,19 @@ spec:
     spec:
       containers:
       - name: myapp-container
-        image: docker.io/wxzd/simulatenameunknown:v1  # Replace with your app image
+        image: docker.io/wxzd/simulatenameunknown:v1.1  # Replace with your app image
 
         env:
         - name: Hostname
           value: "gateway.ocbc.com"
         - name: Nameserver
-          value: "12.0.1.4" # custom dns server
+          value: "168.129.63.16" # custom dns server
         - name: NameserverPort
           value: "53"
         - name: MillisecondBetweenCalls
-          value: "2000"
+          value: "1500"
+        - name: NumberOfConcurrentHTTPCall
+          value: "20"
 
         resources:
           requests:

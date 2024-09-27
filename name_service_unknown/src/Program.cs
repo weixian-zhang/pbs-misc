@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using DnsClient;
 using System.Net;
+using System.Collections.Concurrent;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -8,13 +9,14 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-using HttpClient http = new();
-
 
 DotEnv.Load();
 
+const string httpErrorPrefix = "http_error";
+const string dnsErrorPrefix = "dns_error";
+
 string host = Environment.GetEnvironmentVariable("Hostname") ?? "gateway.ocbc.com";
-string http_address = $"https://{host}";
+string http_address = $"https://httpbin.org/get"; //$"https://{host}/authentication/oauth2/token/1.0";
 int.TryParse(Environment.GetEnvironmentVariable("MillisecondBetweenCalls"), out int temp);
 int millisecondBetweenCalls = temp == 0 ? 2000 : temp;
 
@@ -25,67 +27,156 @@ int nameserverPort = tempPort == 0 ? 53 : tempPort;
 
 var dns = new LookupClient(new IPEndPoint(nameserver, nameserverPort));
 
+int.TryParse(Environment.GetEnvironmentVariable("NumberOfConcurrentHTTPCall"), out int tempCalls);
+int numberOfConcurrentHTTPCall = tempCalls == 0 ? 30 : tempCalls;
 
 while (true)
 {
+
     try 
     {
         var result = await dns.QueryAsync(host, QueryType.A);
         var record = result.Answers.ARecords().FirstOrDefault();
         var ip = record?.Address.ToString();
 
-        Log.Logger.Information($"1. {host} resolved by nameserver {nameserver}:{nameserverPort.ToString()} is successful");
+        Log.Logger.Information($"Step-1. {host} resolved by nameserver {nameserver}:{nameserverPort.ToString()} is successful");
     }
     catch (DnsResponseException drex)
     {
-        Log.Logger.Fatal($"1. nameserver {nameserver}:{nameserverPort.ToString()}, DNS-Error={drex.DnsError}, {drex.ToString()}");
+        Log.Logger.Fatal($"Step-1. {dnsErrorPrefix} - nameserver {nameserver}:{nameserverPort.ToString()}, DNS-Error={drex.DnsError}, {drex.ToString()}");
     }
     catch(Exception ex) {
-        Log.Logger.Fatal(ex.ToString());
+        Log.Logger.Fatal($"Step-1 - {dnsErrorPrefix} - {ex.ToString()}");
     }
 
-    Thread.Sleep(500);
 
-    //make HTTP call
+    // http call
+    int degreeOfParallelism = numberOfConcurrentHTTPCall;
+    using var semaphoreSlim  = new SemaphoreSlim(degreeOfParallelism, degreeOfParallelism);
+    var tasks = Enumerable.Range(0, numberOfConcurrentHTTPCall).Select(async i =>
+    {
+        await semaphoreSlim.WaitAsync();
+        try
+        {
+            await httpCall();
+        }
+        finally
+        {
+            semaphoreSlim.Release();
+        }
+    });
+
+    // Wait for all tasks to complete
+    await Task.WhenAll(tasks);
+
+    try 
+    {
+        var result = await dns.QueryAsync(host, QueryType.A);
+        var record = result.Answers.ARecords().FirstOrDefault();
+        var ip = record?.Address.ToString();
+
+        Log.Logger.Information($"Step-3 - {host} resolved by nameserver {nameserver}:{nameserverPort.ToString()} is successful");
+    }
+    catch (DnsResponseException drex)
+    {
+        Log.Logger.Fatal($"Step-3 - {dnsErrorPrefix} - nameserver {nameserver}:{nameserverPort.ToString()}, DNS-Error={drex.DnsError}, {drex.ToString()}");
+    }
+    catch(Exception ex) {
+        Log.Logger.Fatal($"Step-3 - {dnsErrorPrefix} - {ex.ToString()}");
+    }
+
+    await Task.Delay(millisecondBetweenCalls);
+
+}
+
+
+async Task httpCall() {
     try
     {
-        await http.GetStringAsync(http_address);
+        var http = new HttpClient();
+        var resp = await http.GetStringAsync(http_address);
+
+        //var resp = await http.PostAsync(http_address, null);
+        // if (resp.StatusCode == HttpStatusCode.Forbidden) {
+        //     Log.Logger.Information($"Step-2 - HTTP conection to {http_address} successfully");
+        // }
     }
     catch(HttpRequestException httpex) {
         if (!httpex.Message.StartsWith("Response status code does not indicate success: 403")) {
-            Log.Logger.Fatal($"2. {httpex.ToString()}");
+            Log.Logger.Fatal($"Step-2 - {httpErrorPrefix} - {httpex.ToString()}");
         }
         else {
-            Log.Logger.Information($"2. HTTP conection to {host} successfully");
+            Log.Logger.Information($"Step-2 - {httpErrorPrefix} - HTTP conection to {http_address} successfully");
         }
     }
     catch(OperationCanceledException ocex) {
-        Log.Logger.Fatal($"2. {ocex.HResult.ToString()}, {ocex.ToString()}");   
+        Log.Logger.Fatal($"Step-2 - {httpErrorPrefix} - {ocex.HResult.ToString()}, {ocex.ToString()}");   
     }
     catch (Exception ex)
     {
-        Log.Logger.Information($"2. {ex.ToString()}");
+        Log.Logger.Information($"Step-2 - {httpErrorPrefix} - {ex.ToString()}");
     }
-
-    Thread.Sleep(500);
-
-    try 
-    {
-        var result = await dns.QueryAsync(host, QueryType.A);
-        var record = result.Answers.ARecords().FirstOrDefault();
-        var ip = record?.Address.ToString();
-
-        Log.Logger.Information($"3. {host} resolved by nameserver {nameserver}:{nameserverPort.ToString()} is successful");
-    }
-    catch (DnsResponseException drex)
-    {
-        Log.Logger.Fatal($"3. nameserver {nameserver}:{nameserverPort.ToString()}, DNS-Error={drex.DnsError}, {drex.ToString()}");
-    }
-    catch(Exception ex) {
-        Log.Logger.Fatal(ex.ToString());
-    }
-    
-    Thread.Sleep(millisecondBetweenCalls);
 }
+
+
+    // try 
+    // {
+    //     var result = await dns.QueryAsync(host, QueryType.A);
+    //     var record = result.Answers.ARecords().FirstOrDefault();
+    //     var ip = record?.Address.ToString();
+
+    //     Log.Logger.Information($"1. {host} resolved by nameserver {nameserver}:{nameserverPort.ToString()} is successful");
+    // }
+    // catch (DnsResponseException drex)
+    // {
+    //     Log.Logger.Fatal($"1. {dnsErrorPrefix} - nameserver {nameserver}:{nameserverPort.ToString()}, DNS-Error={drex.DnsError}, {drex.ToString()}");
+    // }
+    // catch(Exception ex) {
+    //     Log.Logger.Fatal($"{dnsErrorPrefix} - {ex.ToString()}");
+    // }
+
+    // await Task.Delay(200);
+
+    //make HTTP call
+    // try
+    // {
+    //     var numOfHttpCalls = new List<int>();
+    //     for(int i = 0; i<= 20; i++) {
+    //         numOfHttpCalls.Add(i);
+    //     }
+
+    //     var tasks = numOfHttpCalls.Select(async i => httpCall());
+    //     await Task.WhenAll(tasks);
+
+        
+        
+    //     // await Task.Run(() => Parallel.ForEach(numOfHttpCalls, i =>
+    //     // {
+            
+    //     // }));
+        
+    // }
+    // catch(HttpRequestException httpex) {
+    //     if (!httpex.Message.StartsWith("Response status code does not indicate success: 403")) {
+    //         Log.Logger.Fatal($"2. {httpErrorPrefix} - {httpex.ToString()}");
+    //     }
+    //     else {
+    //         Log.Logger.Information($"2. {httpErrorPrefix} - HTTP conection to {host} successfully");
+    //     }
+    // }
+    // catch(OperationCanceledException ocex) {
+    //     Log.Logger.Fatal($"2. {httpErrorPrefix} - {ocex.HResult.ToString()}, {ocex.ToString()}");   
+    // }
+    // catch (Exception ex)
+    // {
+    //     Log.Logger.Information($"2. {httpErrorPrefix} - {ex.ToString()}");
+    // }
+
+    
+
+    
+    
+    //Thread.Sleep(millisecondBetweenCalls);
+
 
 

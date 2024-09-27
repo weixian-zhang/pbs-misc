@@ -21,7 +21,7 @@ WORKDIR /app
 # Copy the published application from the build stage
 COPY --from=build-env /app/out ./
 
-ENV Hostname=gateway.ocbc.com
+ENV Url=http://httpbin.org/delay/2
 ENV Nameserver=8.8.8.8
 ENV NameserverPort=53
 ENV MillisecondBetweenCalls=3000

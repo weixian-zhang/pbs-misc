@@ -16,11 +16,11 @@ spec:
     spec:
       containers:
       - name: myapp-container
-        image: docker.io/wxzd/simulatenameunknown:v1.1  # Replace with your app image
+        image: docker.io/wxzd/simulatenameunknown:v1  # Replace with your app image
         imagePullPolicy: Always
         env:
-        - name: Hostname
-          value: "gateway.ocbc.com"
+        - name: Url
+          value: "http://httpbin.org/delay/2"
         - name: Nameserver
           value: "168.63.129.16" # custom dns server
         - name: NameserverPort

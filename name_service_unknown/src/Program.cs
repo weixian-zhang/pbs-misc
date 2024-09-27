@@ -15,8 +15,9 @@ DotEnv.Load();
 const string httpErrorPrefix = "http_error";
 const string dnsErrorPrefix = "dns_error";
 
-string host = Environment.GetEnvironmentVariable("Hostname") ?? "gateway.ocbc.com";
-string http_address = $"https://httpbin.org/get"; //$"https://{host}/authentication/oauth2/token/1.0";
+
+string url = Environment.GetEnvironmentVariable("Url") ?? "http://httpbin.org/delay/2";
+string host = new Uri(url).Host;
 int.TryParse(Environment.GetEnvironmentVariable("MillisecondBetweenCalls"), out int temp);
 int millisecondBetweenCalls = temp == 0 ? 2000 : temp;
 
@@ -94,9 +95,9 @@ async Task httpCall() {
     try
     {
         var http = new HttpClient();
-        var resp = await http.GetStringAsync(http_address);
+        var resp = await http.GetStringAsync(url);
 
-        Log.Logger.Information($"Step-2 - HTTP connection to {http_address} successfully");
+        Log.Logger.Information($"Step-2 - HTTP connection to {url} successfully");
 
         //var resp = await http.PostAsync(http_address, null);
         // if (resp.StatusCode == HttpStatusCode.Forbidden) {
@@ -108,7 +109,7 @@ async Task httpCall() {
             Log.Logger.Fatal($"Step-2 - {httpErrorPrefix} - {httpex.ToString()}");
         }
         else {
-            Log.Logger.Information($"Step-2 - {httpErrorPrefix} - HTTP connection to {http_address} successfully");
+            Log.Logger.Information($"Step-2 - {httpErrorPrefix} - HTTP connection to {url} successfully");
         }
     }
     catch(OperationCanceledException ocex) {

@@ -96,6 +96,8 @@ async Task httpCall() {
         var http = new HttpClient();
         var resp = await http.GetStringAsync(http_address);
 
+        Log.Logger.Information($"Step-2 - HTTP connection to {http_address} successfully");
+
         //var resp = await http.PostAsync(http_address, null);
         // if (resp.StatusCode == HttpStatusCode.Forbidden) {
         //     Log.Logger.Information($"Step-2 - HTTP conection to {http_address} successfully");
@@ -106,7 +108,7 @@ async Task httpCall() {
             Log.Logger.Fatal($"Step-2 - {httpErrorPrefix} - {httpex.ToString()}");
         }
         else {
-            Log.Logger.Information($"Step-2 - {httpErrorPrefix} - HTTP conection to {http_address} successfully");
+            Log.Logger.Information($"Step-2 - {httpErrorPrefix} - HTTP connection to {http_address} successfully");
         }
     }
     catch(OperationCanceledException ocex) {
@@ -118,65 +120,6 @@ async Task httpCall() {
     }
 }
 
-
-    // try 
-    // {
-    //     var result = await dns.QueryAsync(host, QueryType.A);
-    //     var record = result.Answers.ARecords().FirstOrDefault();
-    //     var ip = record?.Address.ToString();
-
-    //     Log.Logger.Information($"1. {host} resolved by nameserver {nameserver}:{nameserverPort.ToString()} is successful");
-    // }
-    // catch (DnsResponseException drex)
-    // {
-    //     Log.Logger.Fatal($"1. {dnsErrorPrefix} - nameserver {nameserver}:{nameserverPort.ToString()}, DNS-Error={drex.DnsError}, {drex.ToString()}");
-    // }
-    // catch(Exception ex) {
-    //     Log.Logger.Fatal($"{dnsErrorPrefix} - {ex.ToString()}");
-    // }
-
-    // await Task.Delay(200);
-
-    //make HTTP call
-    // try
-    // {
-    //     var numOfHttpCalls = new List<int>();
-    //     for(int i = 0; i<= 20; i++) {
-    //         numOfHttpCalls.Add(i);
-    //     }
-
-    //     var tasks = numOfHttpCalls.Select(async i => httpCall());
-    //     await Task.WhenAll(tasks);
-
-        
-        
-    //     // await Task.Run(() => Parallel.ForEach(numOfHttpCalls, i =>
-    //     // {
-            
-    //     // }));
-        
-    // }
-    // catch(HttpRequestException httpex) {
-    //     if (!httpex.Message.StartsWith("Response status code does not indicate success: 403")) {
-    //         Log.Logger.Fatal($"2. {httpErrorPrefix} - {httpex.ToString()}");
-    //     }
-    //     else {
-    //         Log.Logger.Information($"2. {httpErrorPrefix} - HTTP conection to {host} successfully");
-    //     }
-    // }
-    // catch(OperationCanceledException ocex) {
-    //     Log.Logger.Fatal($"2. {httpErrorPrefix} - {ocex.HResult.ToString()}, {ocex.ToString()}");   
-    // }
-    // catch (Exception ex)
-    // {
-    //     Log.Logger.Information($"2. {httpErrorPrefix} - {ex.ToString()}");
-    // }
-
-    
-
-    
-    
-    //Thread.Sleep(millisecondBetweenCalls);
 
 
 

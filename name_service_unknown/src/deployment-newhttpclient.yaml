@@ -17,12 +17,12 @@ spec:
       containers:
       - name: myapp-container
         image: docker.io/wxzd/simulatenameunknown:v1.1  # Replace with your app image
-
+        imagePullPolicy: Always
         env:
         - name: Hostname
           value: "gateway.ocbc.com"
         - name: Nameserver
-          value: "168.129.63.16" # custom dns server
+          value: "168.63.129.16" # custom dns server
         - name: NameserverPort
           value: "53"
         - name: MillisecondBetweenCalls

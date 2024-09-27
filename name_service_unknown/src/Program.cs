@@ -95,6 +95,7 @@ async Task httpCall() {
     try
     {
         var http = new HttpClient();
+        http.Timeout = TimeSpan.FromSeconds(5000);
         var resp = await http.GetStringAsync(url);
 
         Log.Logger.Information($"Step-2 - HTTP connection to {url} successfully");

@@ -8,6 +8,6 @@ data:
     gateway.ocbc.com:53 {
       errors
       log
-      cache 10
+      cache 30
       forward . 1.1.1.1 1.1.1.2
     }

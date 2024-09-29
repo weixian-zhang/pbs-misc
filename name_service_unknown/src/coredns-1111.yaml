@@ -4,10 +4,10 @@ metadata:
   name: coredns-custom
   namespace: kube-system
 data:
-  azure.server: | # you may select any name here, but it must end with the .server file extension
-    gateway,ocbc.com:53 {
+  gatewayocbccom.server: | # you may select any name here, but it must end with the .server file extension
+    gateway.ocbc.com:53 {
       errors
       log
       cache 10
-      forward . 1.1.1.2
+      forward . 1.1.1.10
     }

@@ -110,7 +110,7 @@ async Task httpCall() {
             Log.Logger.Fatal($"Step-2 - {httpErrorPrefix} - {httpex.ToString()}");
         }
         else {
-            Log.Logger.Information($"Step-2 - {httpErrorPrefix} - HTTP connection to {url} successfully");
+            Log.Logger.Information($"Step-2 - HTTP connection to {url} successfully");
         }
     }
     catch(OperationCanceledException ocex) {

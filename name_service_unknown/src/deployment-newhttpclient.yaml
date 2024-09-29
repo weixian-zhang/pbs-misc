@@ -20,15 +20,15 @@ spec:
         imagePullPolicy: Always
         env:
         - name: Url
-          value: "https://httpbin.org/delay/1"
+          value: "gateway.ocbc.com" #"https://httpbin.org/delay/1"
         - name: Nameserver
           value: "168.63.129.16" # custom dns server
         - name: NameserverPort
           value: "53"
         - name: MillisecondBetweenCalls
-          value: "1500"
+          value: "2000"
         - name: NumberOfConcurrentHTTPCall
-          value: "40"
+          value: "10"
 
         resources:
           requests:

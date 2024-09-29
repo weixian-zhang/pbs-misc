@@ -9,5 +9,5 @@ data:
       errors
       log
       cache 10
-      forward . 1.1.1.1
+      forward . 1.1.1.1 1.1.1.2
     }

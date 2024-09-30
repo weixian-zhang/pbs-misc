@@ -15,7 +15,7 @@ spec:
         app: ocbc-httpclient
     spec:
       containers:
-      - name: myapp-container
+      - name: ocbc-httpclient
         image: docker.io/wxzd/simulatenameunknown:v1  # Replace with your app image
         imagePullPolicy: Always
         env:

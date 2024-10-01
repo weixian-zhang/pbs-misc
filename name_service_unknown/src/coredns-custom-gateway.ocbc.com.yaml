@@ -9,7 +9,7 @@ data:
       errors
       log
       cache 30
-      forward . 168.129.63.16
+      forward . 168.63.129.16
     }
 
 # 1.1.1.1 1.1.1.2

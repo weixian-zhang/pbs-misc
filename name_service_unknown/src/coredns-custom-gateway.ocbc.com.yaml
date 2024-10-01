@@ -6,10 +6,8 @@ metadata:
 data:
   gatewayocbccom.server: | # you may select any name here, but it must end with the .server file extension
     gateway.ocbc.com:53 {
+      whoami
       errors
-      log
-      cache 30
+      log . "{type}: {name} requested by {remote} to {local}, duration: {duration}"
       forward . 168.63.129.16
     }
-
-# 1.1.1.1 1.1.1.2

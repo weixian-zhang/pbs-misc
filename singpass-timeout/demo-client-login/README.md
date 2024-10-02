@@ -1,3 +1,5 @@
+[GitHub repo](https://github.com/singpass/demo-app)
+
 # Demo App
 
 This repository provides examples of how you might integrate with Singpass (an OIDC provider) as an OIDC client.

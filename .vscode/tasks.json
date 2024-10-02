@@ -36,6 +36,15 @@
                 "${workspaceFolder}/name_service_unknown/src/main.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "npm start singpass client",
+            "type": "shell",
+            "command": "npm start",
+            "options": {
+                "cwd": "${workspaceFolder}/singpass-timeout/demo-client-login/examples/nodejs/"
+            },
+            "problemMatcher": []
         }
     ]
 }

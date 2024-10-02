@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".debug app",
+            "name": "debug httpclient",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -19,6 +19,7 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
-        }
+        },
+      
     ]
 }

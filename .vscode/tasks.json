@@ -42,7 +42,7 @@
             "type": "shell",
             "command": "npm start",
             "options": {
-                "cwd": "${workspaceFolder}/singpass-timeout/demo-client-login/examples/nodejs/"
+                "cwd": "${workspaceFolder}/singpass-timeout/"
             },
             "problemMatcher": []
         }

@@ -21,18 +21,18 @@
   <script>
     const msg = document.getElementById('msg');
     const login = document.getElementById('login');
-    const logout = document.getElementById('logout');
-    fetch('/user').then(async (res) => {
-      if (res.status === 200) {
-        const { id } = await res.json();
-        msg.innerText = `Thanks for logging in. Your user ID is ${id}.`;
-        login.style.display = 'none';
-        logout.style.display = 'inline-flex';
-      } else {
-        msg.innerText = 'You are not logged in.';
-        login.style.display = 'inline-flex';
-        logout.style.display = 'none';
-      }
-    });
+    // const logout = document.getElementById('logout');
+    // fetch('/user').then(async (res) => {
+    //   if (res.status === 200) {
+    //     const { id } = await res.json();
+    //     msg.innerText = `Thanks for logging in. Your user ID is ${id}.`;
+    //     login.style.display = 'none';
+    //     logout.style.display = 'inline-flex';
+    //   } else {
+    //     msg.innerText = 'You are not logged in.';
+    //     login.style.display = 'inline-flex';
+    //     logout.style.display = 'none';
+    //   }
+    // });
   </script>
 </html>

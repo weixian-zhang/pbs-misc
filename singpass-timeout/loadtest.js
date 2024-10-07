@@ -55,7 +55,9 @@ export default async function () {
 
     await singpassLoginBtn.click();
 
-    console.log(`SingPAss login button clicked`);
+    console.log(`SingPass login button clicked`);
+
+    await page.waitForNavigation({timeout: 8000});
 
     //await Promise.all([page.waitForNavigation(), await page.locator('button[id="login"]').click()]);
     

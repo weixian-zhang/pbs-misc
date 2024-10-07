@@ -26,19 +26,25 @@ router.get('/.well-known/jwks.json', function getJwks(ctx) {
 });
 
 router.get('/login', async function handleLogin(ctx) {
-  const code_verifier = generators.codeVerifier();
-  const code_challenge = generators.codeChallenge(code_verifier);
-  const nonce = crypto.randomUUID();
-  const state = crypto.randomBytes(16).toString('hex');
-  ctx.session.auth = { code_verifier, nonce, state };
-  const authorizationUrl = singpassClient.authorizationUrl({
-    redirect_uri: config.REDIRECT_URI,
-    code_challenge_method: 'S256',
-    code_challenge,
-    nonce,
-    state,
-  });
-  ctx.redirect(authorizationUrl);
+
+  try {
+    const code_verifier = generators.codeVerifier();
+    const code_challenge = generators.codeChallenge(code_verifier);
+    const nonce = crypto.randomUUID();
+    const state = crypto.randomBytes(16).toString('hex');
+    ctx.session.auth = { code_verifier, nonce, state };
+    const authorizationUrl = singpassClient.authorizationUrl({
+      redirect_uri: config.REDIRECT_URI,
+      code_challenge_method: 'S256',
+      code_challenge,
+      nonce,
+      state,
+    });
+    ctx.redirect(authorizationUrl);
+  } catch (error) {
+    console.error(error);
+  }
+  
 });
 
 router.get('/callback', async function handleSingpassCallback(ctx) {
@@ -51,7 +57,8 @@ router.get('/callback', async function handleSingpassCallback(ctx) {
     ctx.redirect('/');
     console.log('These are the claims in the ID token:');
     console.log(tokenSet.claims(), '\n');
-  } catch {
+  } catch (error) {
+    console.error(error);
     ctx.status = 401;
   }
 });

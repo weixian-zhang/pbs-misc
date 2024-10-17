@@ -10,8 +10,8 @@ export const options = {
           type: 'chromium',
         },
       },
-      vus: 1,
-      iterations: 1,
+      vus: 10,
+      iterations: 10,
       startTime: "0s",
     },
   },
@@ -37,12 +37,24 @@ export default async function () {
 
     console.log(`goto page ${oprpUrl}`)
 
-    const resp = await page.goto(oprpFullUrl);
-    
+    var resp = null;
+
+    resp = await page.goto(oprpFullUrl);
+
     console.log(`at page ${page.url()}`)
+    
+
+    if (!resp) {
+      console.error('page response is null');
+    }
 
     const content = await resp.text();
 
+    if (resp.status() != 200) {
+      console.error(content);
+    }
+    
+    
     check(resp, {
       'is login mockpass successful': (r) => r.status() == 200,
       'is login mockpass response message successful': (r) => content.toLowerCase() == 'mockpass login successfully'

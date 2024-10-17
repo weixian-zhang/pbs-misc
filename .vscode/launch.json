@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/name_service_unknown/src/bin/Debug/net8.0/main.dll",
+            "program": "${workspaceFolder}/name_service_unknown/bin/Debug/net8.0/main.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/name_service_unknown/src",
+            "cwd": "${workspaceFolder}/name_service_unknown",
             "console": "internalConsole",
             "stopAtEntry": false
         },

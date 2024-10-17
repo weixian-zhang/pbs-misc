@@ -40,7 +40,7 @@ router.get('/login', async function handleLogin(ctx) {
       nonce,
       state,
     });
-    ctx.redirect(authorizationUrl);
+    ctx.redirect(authorizationUrl); //redirect to SP login page
   } catch (error) {
     console.error(error);
   }

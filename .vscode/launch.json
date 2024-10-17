@@ -20,6 +20,13 @@
             "type": "coreclr",
             "request": "attach"
         },
+        {
+            "command": "npm run start",
+            "name": "start mockpass",
+            "request": "launch",
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}/singpass-timeout/references/mockpass-main",
+        }
       
     ]
 }
